@@ -40,8 +40,9 @@ export const getServerSideProps = async (context: NextPageContext) => {
 
   const { name, description, homepage, gitRepository, distTags, versionsToTimestamps } = data
 
+  
   return {
-    props: { name, description, homepage, gitRepository, distTags, versionsToTimestamps },
+    props: { name, description, homepage, gitRepository: JSON.parse(JSON.stringify(gitRepository)), distTags, versionsToTimestamps },
   }
 }
 
