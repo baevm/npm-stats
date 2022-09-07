@@ -15,3 +15,9 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 export default MyApp
+
+// TODO:
+// night mode
+// compare packages
+// search suggestions
+// search history

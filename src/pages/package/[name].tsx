@@ -83,7 +83,4 @@ export const getServerSideProps = async (context: NextPageContext) => {
   }
 }
 
-// dist - unpacked size in bytes
-// https://bundlephobia.com/api/size?package=react-query
-
 export default PackagePage
