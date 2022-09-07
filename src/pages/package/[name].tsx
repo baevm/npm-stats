@@ -1,49 +1,89 @@
 import { NextPageContext } from 'next'
-import { getPackument } from 'query-registry'
-import React from 'react'
-import { FaNpm, FaGithub } from 'react-icons/fa'
-import { FiLink2 } from 'react-icons/fi'
-import { getTimeAgo } from '../../utils/getTimeAgo'
+import Head from 'next/head'
+import { getDailyPackageDownloads, getPackument } from 'query-registry'
+import Logo from '../../components/Logo'
+import DownloadsChart from '../../components/PackagePage/DownloadsChart'
+import PackageHeader from '../../components/PackagePage/PackageHeader'
+import SearchForm from '../../components/SearchForm'
 
-const PackagePage = ({ name, description, homepage, gitRepository, distTags, versionsToTimestamps }: any) => {
+// const DownloadsChart = dynamic(() => import('../../components/PackagePage/DownloadsChart'), { ssr: false })
+
+const PackagePage = ({ packageData, packageDownloadsMonth, packageSize, packageDownloadsYear }: any) => {
   return (
-    <div className='w-screen h-screen flex items-center justify-center bg-slate-200'>
-      <div className='w-3/4 h-3/4 flex justify-start flex-col font-Telegraf '>
-        <div className='flex items-center'>
-          <h1 className='text-6xl'>{name && name}</h1>
-          <a className='ml-4 cursor-pointer' href={gitRepository.url}>
-            <FaGithub size={24} />
-          </a>
-          <a className='ml-4 cursor-pointer' href={`https://www.npmjs.com/package/${name}`}>
-            <FaNpm size={24} />
-          </a>
-          {homepage && (
-            <a className='ml-4 cursor-pointer' href={homepage}>
-              <FiLink2 size={24} />
-            </a>
-          )}
+    <>
+      <Head>
+        <title>{packageData.name} | npm stats</title>
+      </Head>
+      <div className='w-screen h-screen flex flex-col items-center bg-slate-200'>
+        <div className='w-11/12 md:w-3/4 pt-4'>
+          <Logo />
+          <div className='pt-8'>
+            <SearchForm />
+            <div className='pt-8'>
+              <PackageHeader packageData={packageData} packageSize={packageSize} />
+              <DownloadsChart
+                packageDownloadsMonth={packageDownloadsMonth}
+                packageDownloadsYear={packageDownloadsYear}
+              />
+            </div>
+          </div>
         </div>
-        <div className='text-zinc-600'>
-          <span>{distTags.latest}</span>
-          <span className='ml-4'>{getTimeAgo(versionsToTimestamps[distTags.latest])}</span>
-        </div>
-        <h3 className='text-lg'>{description && description}</h3>
       </div>
-    </div>
+    </>
   )
 }
 
 export const getServerSideProps = async (context: NextPageContext) => {
   const packageName: any = context.query.name
+  const date = new Date()
+  const today = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
+  const monthAgoDay = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate()
 
-  const data = await getPackument({ name: packageName })
+  const dateRange = {
+    start: new Date(monthAgoDay),
+    end: new Date(today),
+  }
 
-  const { name, description, homepage, gitRepository, distTags, versionsToTimestamps } = data
+  let packageDoc
 
-  
+  try {
+    packageDoc = await getPackument({ name: packageName })
+  } catch (error) {
+    return {
+      redirect: {
+        destination: '/404',
+        permanent: false,
+      },
+    }
+  }
+
+  const packageDownloadsMonth = await getDailyPackageDownloads({ name: packageName, period: dateRange })
+  const packageDownloadsYear = await getDailyPackageDownloads({
+    name: packageName,
+    period: 'last-year',
+  })
+  const packageSize = await fetch(`https://bundlephobia.com/api/size?package=${packageName}`).then((res) => res.json())
+
+  const { name, description, homepage, gitRepository, distTags, versionsToTimestamps } = packageDoc
+
   return {
-    props: { name, description, homepage, gitRepository: JSON.parse(JSON.stringify(gitRepository)), distTags, versionsToTimestamps },
+    props: {
+      packageData: {
+        name,
+        description,
+        homepage,
+        gitRepository: JSON.parse(JSON.stringify(gitRepository)),
+        distTags,
+        versionsToTimestamps,
+      },
+      packageDownloadsMonth,
+      packageSize,
+      packageDownloadsYear,
+    },
   }
 }
+
+// dist - unpacked size in bytes
+// https://bundlephobia.com/api/size?package=react-query
 
 export default PackagePage
