@@ -21,3 +21,5 @@ export default MyApp
 // compare packages
 // search suggestions
 // search history
+// packages likes @nivo/line returns 404
+// size formating for mb's
