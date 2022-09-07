@@ -25,7 +25,7 @@ const DownloadsChart = ({ packageDownloadsMonth, packageDownloadsYear }: any) =>
     },
   ]
 
-  console.log(packageDownloadsYear)
+
   return (
     <div className='h-96 w-full font-Telegraf text-lg'>
       <div>
@@ -54,9 +54,10 @@ const DownloadsChart = ({ packageDownloadsMonth, packageDownloadsYear }: any) =>
         }}
         axisBottom={{ tickRotation: -90, format: '%Y-%m-%d' }}
         colors={{ scheme: 'category10' }}
-        yFormat=' >-.2f'
+        yFormat={(v) => v.toLocaleString()}
         axisTop={null}
         axisRight={null}
+        axisLeft={{ format: (v) => v.toLocaleString() }}
         areaBaselineValue={range === 'month' ? mivValueMonth : mivValueYear}
         pointSize={0}
         enableArea={true}
