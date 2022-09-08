@@ -1,15 +1,22 @@
-import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import NextNProgress from 'nextjs-progressbar'
+import { ContextProvider, ThemeContext } from '../context/ThemeContext'
+import '../styles/globals.css'
+import React from 'react'
+import Layout from '../components/Layout'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
-      <NextNProgress
-        color='linear-gradient(90deg, rgba(121,9,88,1) 0%, rgba(228,191,23,1) 50%, rgba(121,9,88,1) 100%)'
-        options={{ showSpinner: false, easing: 'ease', speed: 400 }}
-      />
-      <Component {...pageProps} />
+      <ContextProvider>
+        <NextNProgress
+          color='linear-gradient(90deg, rgba(121,9,88,1) 0%, rgba(228,191,23,1) 50%, rgba(121,9,88,1) 100%)'
+          options={{ showSpinner: false, easing: 'ease', speed: 400 }}
+        />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </ContextProvider>
     </>
   )
 }
@@ -17,9 +24,5 @@ function MyApp({ Component, pageProps }: AppProps) {
 export default MyApp
 
 // TODO:
-// night mode
 // compare packages
-// search suggestions
-// search history
-// packages likes @nivo/line returns 404
-// size formating for mb's
+// package suggestions

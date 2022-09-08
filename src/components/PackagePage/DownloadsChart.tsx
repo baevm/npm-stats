@@ -25,16 +25,15 @@ const DownloadsChart = ({ packageDownloadsMonth, packageDownloadsYear }: any) =>
     },
   ]
 
-
   return (
     <div className='h-96 w-full font-Telegraf text-lg'>
-      <div>
+      <div className='dark:text-zinc-100'>
         Package downloads in past{' '}
         <select
           name='range'
           id='range'
           onChange={(e) => setRange(e.target.value)}
-          className='bg-slate-200 border-b-[1px] border-blue-500 outline-none'>
+          className='bg-slate-200 dark:bg-slate-800 border-b-[1px] border-blue-500 outline-none'>
           <option value='month'>1 Month</option>
           <option value='year'>1 Year</option>
         </select>
@@ -66,7 +65,7 @@ const DownloadsChart = ({ packageDownloadsMonth, packageDownloadsYear }: any) =>
         pointBorderColor={{ from: 'serieColor' }}
         pointLabelYOffset={-12}
         useMesh={true}
-        theme={{ fontFamily: 'sans-serif' }}
+        theme={{ fontFamily: 'sans-serif', textColor: 'black' }}
       />
     </div>
   )
