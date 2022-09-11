@@ -1,20 +1,27 @@
 import { useRouter } from 'next/router'
-import React, { FormEvent, useEffect, useState } from 'react'
-import { FaSearch, FaRegClock } from 'react-icons/fa'
+import { FormEvent, useEffect, useState } from 'react'
+import { FaSearch } from 'react-icons/fa'
+import HistoryItem from './HistoryItem'
+
+export type HistoryItem = {
+  name: string
+  id: number
+}
 
 const SearchForm = () => {
-  const [history, setHistory] = useState([])
+  const [history, setHistory] = useState<HistoryItem[]>([])
   const router = useRouter()
   const [packageName, setPackageName] = useState('')
   const [isDropdown, setIsDropdown] = useState(false)
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
-
     if (!packageName) return
-    const oldHistory: string[] = JSON.parse(localStorage.getItem('searchHistory') || '[]')
-    oldHistory.unshift(packageName)
+
+    const oldHistory: HistoryItem[] = JSON.parse(localStorage.getItem('searchHistory') || '[]')
+    oldHistory.unshift({ name: packageName, id: Date.now() })
     localStorage.setItem('searchHistory', JSON.stringify(oldHistory))
+
     router.push(`/package/${packageName}`)
   }
 
@@ -48,14 +55,7 @@ const SearchForm = () => {
       {isDropdown && history && (
         <div className='absolute w-full max-h-40 overflow-y-auto rounded-b-md bg-white dark:bg-slate-500 shadow-lg'>
           {history.map((item) => (
-            <div
-              key={item}
-              onMouseDown={(e) => e.preventDefault()}
-              onClick={(e) => router.push(`/package/${item}`)}
-              className='p-2 flex items-center hover:bg-slate-200 dark:hover:bg-slate-400 cursor-pointer'>
-              <FaRegClock size='14' className='mt-[4px] text-zinc-600 dark:text-zinc-300' />
-              <span className='ml-2 text-lg text-zinc-600 dark:text-zinc-300'>{item}</span>
-            </div>
+            <HistoryItem item={item} key={item.id} setHistory={setHistory}/>
           ))}
         </div>
       )}

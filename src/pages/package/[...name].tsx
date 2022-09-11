@@ -4,8 +4,8 @@ import { getDailyPackageDownloads, getPackument } from 'query-registry'
 import Logo from '../../components/Logo'
 import DownloadsChart from '../../components/PackagePage/DownloadsChart'
 import PackageHeader from '../../components/PackagePage/PackageHeader'
-import SearchForm from '../../components/SearchForm'
-import SimilarPackages from '../../components/SimilarPackages'
+import SearchForm from '../../components/SearchForm/SearchForm'
+import Related from '../../components/Related'
 
 // const DownloadsChart = dynamic(() => import('../../components/PackagePage/DownloadsChart'), { ssr: false })
 
@@ -21,7 +21,7 @@ const PackagePage = ({
       <Head>
         <title>{packageData.name} | npm stats</title>
       </Head>
-      <div className='w-screen h-screen flex flex-col items-center bg-slate-200 dark:bg-slate-800 transition-colors duration-300'>
+      <div className='min-w-screen min-h-screen flex flex-col items-center bg-slate-200 dark:bg-slate-800 transition-colors duration-300'>
         <div className='w-11/12 md:w-3/4 pt-4'>
           <Logo />
           <div className='pt-8'>
@@ -33,9 +33,7 @@ const PackagePage = ({
                 packageDownloadsYear={packageDownloadsYear}
               />
             </div>
-            <div className='pt-8'>
-              {similarPackages.length > 0 && <SimilarPackages similarPackages={similarPackages} />}
-            </div>
+            <div className='pt-8'>{similarPackages.length > 0 && <Related similarPackages={similarPackages} />}</div>
           </div>
         </div>
       </div>
@@ -95,7 +93,6 @@ export const getServerSideProps = async (context: NextPageContext) => {
       packageDownloadsMonth,
       packageSize,
       packageDownloadsYear,
-      packageDoc: JSON.parse(JSON.stringify(packageDoc)),
       similarPackages,
     },
   }
