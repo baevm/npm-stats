@@ -4,8 +4,8 @@ import { getDailyPackageDownloads, getPackument } from 'query-registry'
 import Logo from '../../components/Logo'
 import DownloadsChart from '../../components/PackagePage/DownloadsChart'
 import PackageHeader from '../../components/PackagePage/PackageHeader'
-import SearchForm from '../../components/SearchForm/SearchForm'
 import Related from '../../components/Related'
+import SearchForm from '../../components/SearchForm/SearchForm'
 
 // const DownloadsChart = dynamic(() => import('../../components/PackagePage/DownloadsChart'), { ssr: false })
 
@@ -45,13 +45,17 @@ export const getServerSideProps = async (context: NextPageContext) => {
   const packageName: any = (context.query.name as string[]).join('/')
   let packageDoc
 
-  const date = new Date()
-  const today = date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate()
-  const monthAgoDay = date.getFullYear() + '-' + date.getMonth() + '-' + date.getDate()
+  const today = new Date();
+
+  const monthAgo = new Date();
+  monthAgo.setMonth(monthAgo.getMonth() - 1);
+
+  const startDateString = monthAgo.toISOString().split('T')[0];
+  const endDateString = today.toISOString().split('T')[0];
 
   const dateRange = {
-    start: new Date(monthAgoDay),
-    end: new Date(today),
+    start: new Date(startDateString),
+    end: new Date(endDateString),
   }
 
   try {
